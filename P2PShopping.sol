@@ -103,15 +103,22 @@ contract P2PShopping {
         return (1);
     }
 
-    function buyAProduct(string memory productId) public view returns(uint256) {
-        for(uint productIndex = 0; productIndex < productsCount; productIndex++) {
-            Product memory product = products[productIndex];
-            if(compare(product.id, productId) == 0) {
-                if (productIndex >= products.length) return (2);
-                return address(product.soldBy).balance;
-            }
-        }
-        return address(msg.sender).balance;
+    modifier inStock(string memory productId) {
+        Product memory foundProduct = getOneProductById(productId);
+        require(foundProduct.stock > 0, "Out Of Stock");
+        _;
+    }
+
+    modifier hasEnoughMoney(string memory productId) {
+        Product memory foundProduct = getOneProductById(productId);
+        require(msg.value == foundProduct.price, "Not enough Money.");
+        _;
+    }
+
+    function buyAProduct(string memory productId) public payable inStock(productId) hasEnoughMoney(productId) {
+        Product memory foundProduct = getOneProductById(productId);
+        address payable recipient = payable(foundProduct.soldBy);
+        recipient.transfer(msg.value);
     }
 
 }
