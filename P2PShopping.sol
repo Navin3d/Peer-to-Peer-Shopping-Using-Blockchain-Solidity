@@ -8,12 +8,11 @@ contract P2PShopping {
         string id;
         string title;
         string imageUrl;
-        uint256 stock;
-        uint256 price;
+        uint stock;
+        uint price;
         address soldBy;
     }
 
-    uint public productsCount = 0;
     Product[] public products;
     address private owner;
 
@@ -54,7 +53,7 @@ contract P2PShopping {
     }
 
     function getOneProductById(string memory productId) public view returns(Product memory) {
-        for(uint productIndex = 0; productIndex < productsCount; productIndex++) {
+        for(uint productIndex = 0; productIndex < products.length; productIndex++) {
             Product memory product = products[productIndex];
             if(compare(productId, product.id) == 0) {
                 return product;
@@ -65,8 +64,7 @@ contract P2PShopping {
     }
 
     function postAProduct(Product calldata newProduct) public {
-        productsCount++;
-        products[productsCount] = newProduct;
+        products.push(newProduct);
     }
 
     modifier onlyProductOwner(string memory productId) {
@@ -76,7 +74,7 @@ contract P2PShopping {
     }
 
     function updateAProduct(Product calldata productUpdated) public onlyProductOwner(productUpdated.id) {
-        for(uint productIndex = 0; productIndex < productsCount; productIndex++) {
+        for(uint productIndex = 0; productIndex < products.length; productIndex++) {
             Product storage product = products[productIndex];
             if(compare(product.id, productUpdated.id) == 0) {
                 product.title = productUpdated.title;
@@ -88,7 +86,7 @@ contract P2PShopping {
     }
 
     function deleteAProduct(string memory productId) public onlyProductOwner(productId) returns(int) {
-        for(uint productIndex = 0; productIndex < productsCount; productIndex++) {
+        for(uint productIndex = 0; productIndex < products.length; productIndex++) {
             Product memory product = products[productIndex];
             if(compare(product.id, productId) == 0) {
                 if (productIndex >= products.length) return (-1);
@@ -96,7 +94,6 @@ contract P2PShopping {
                     products[i] = products[i+1];
                 }
                 delete products[products.length-1];
-                productsCount--;
                 return (0);
             }
         }
@@ -116,9 +113,14 @@ contract P2PShopping {
     }
 
     function buyAProduct(string memory productId) public payable inStock(productId) hasEnoughMoney(productId) {
-        Product memory foundProduct = getOneProductById(productId);
-        address payable recipient = payable(foundProduct.soldBy);
-        recipient.transfer(msg.value);
+        for(uint productIndex = 0; productIndex < products.length; productIndex++) {
+            Product storage product = products[productIndex];
+            if(compare(product.id, productId) == 0) {
+                product.stock--;
+                address payable recipient = payable(product.soldBy);
+                recipient.transfer(msg.value);
+            }
+        }
     }
 
 }
