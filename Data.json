@@ -1,5 +1,8 @@
 {
+    "contract_address": "0xC23D9886Dc215392463aBEd1022BBa7F40938cBb",
     "products": [
-        ["1", "Onion", "https://www.ampimex.in/wp-content/uploads/2021/02/onion.jpg", 10, 309616, "0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2"]
+        ["PRD-0001", "Onion", "https://www.ampimex.in/wp-content/uploads/2021/02/onion.jpg", 10, 309616, "0x53E2EEFfaEF34F45Ac807b93074Bb5fA86041bB6"],
+        ["PRD-0002", "Tomato", "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg", 10, 109616, "0x53E2EEFfaEF34F45Ac807b93074Bb5fA86041bB6"],
+        ["PRD-0003", "Potato", "https://www.macmillandictionary.com/external/slideshow/full/141151_full.jpg", 10, 309616, "0x53E2EEFfaEF34F45Ac807b93074Bb5fA86041bB6"]
     ]
 }
